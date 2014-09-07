@@ -1,4 +1,4 @@
-/*
+ /*
  * PiFocuser.cpp
  *
  *  Created on: Sep 6, 2014
@@ -36,26 +36,31 @@ using namespace std;
 
 
 	PiFocuser::PiFocuser():m_direction(PiFocuser::left){
-		wiringPiSetup();
+		wiringPiSetupGpio();
 		for (int pin = 0 ; pin < 4 ; ++pin)
 		    pinMode (StepperPins[pin], OUTPUT) ;
 	}
 
 	bool PiFocuser::move(Direction direction, int stepCount){
 		int count=0;
+                int cycleCount=0;
+
 		while (count<stepCount){
 
-
-			for (int stepPin=0; stepPin<PiFocuser::shortSequenceCount; stepPin++){
-				int value=shortSequence[stepPin];
+			for (int stepPin=0; stepPin<4; stepPin++){
+				int value=shortSequence[cycleCount*4+stepPin];
 				if (value)
 					cout <<"Enable pin"<<StepperPins[stepPin]<<endl;
 				else
 					cout <<"Disable pin"<<StepperPins[stepPin]<<endl;
 				digitalWrite(StepperPins[stepPin], value);
 			}
-
-			delay(500); //ms
+			if (cycleCount<4){
+			  cycleCount++;
+                        } else {
+                          cycleCount=0; 
+                        }
+			delay(50); //ms
 			count++;
 		}
 		return true;
