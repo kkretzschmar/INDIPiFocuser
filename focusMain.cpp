@@ -12,6 +12,7 @@ using namespace std;
 
 int main(){
 	PiFocuser piFocuser;
+	PiFocuser::verbosity=true;
 	cout <<"PiFocuser object created."<<endl;
 
 	cout <<"PiFocuser move 100 steps in left direction."<<endl;

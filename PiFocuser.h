@@ -18,9 +18,10 @@ private:
 	static const int  shortSequence[shortSequenceCount];
 	static const int  longSequence[longSequenceCount];
 	static const int  StepperPins [4];
-	static bool       verbosity;
 
 public:
+	static bool       verbosity;
+
 	enum Direction {
 		left,
 		right

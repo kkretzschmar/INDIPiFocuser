@@ -49,10 +49,10 @@ void PiFocuser::setCycleCount(Direction dir, int& cycleCount){
 		cycleCount=0;
 		break;
 	case PiFocuser::right:
-		cycleCount=4;
+		cycleCount=4-1;
 		break;
 	default:
-
+		break;
 	}
 }
 
@@ -65,14 +65,14 @@ void PiFocuser::updateCycleCount(Direction dir, int& cycleCount){
 		cycleCount--;
 		break;
 	default:
-
+		break;
 	}
 }
 
 bool PiFocuser::move(Direction direction, int stepCount, int delayMillis) {
 	int count = 0;
 	int cycleCount;
-	setCycleCount(direction,cycleCount)
+	setCycleCount(direction,cycleCount);
 	while (count < stepCount) {
 
 		for (int stepPin = 0; stepPin < 4; stepPin++) {
@@ -85,10 +85,10 @@ bool PiFocuser::move(Direction direction, int stepCount, int delayMillis) {
 			}
 			digitalWrite(StepperPins[stepPin], value);
 		}
-		if (cycleCount < 4) {
+		if ((cycleCount < 4) && (cycleCount > -1)) {
 			updateCycleCount(direction,cycleCount);
 		} else {
-			cycleCount = 0;
+			setCycleCount(direction,cycleCount);
 		}
 		delay(delayMillis); //ms
 		count++;
