@@ -1,4 +1,4 @@
- /*
+/*
  * PiFocuser.cpp
  *
  *  Created on: Sep 6, 2014
@@ -16,55 +16,84 @@ using namespace std;
 #define PIN4 27
 
 
-	const int PiFocuser::StepperPins[] = {PIN1,PIN2,PIN3,PIN4};
+bool PiFocuser::verbosity=false;
 
-	const int PiFocuser::shortSequence[] = { HIGH,LOW,LOW,LOW,
-			                           LOW,HIGH,LOW,LOW,
-			                           LOW,LOW,HIGH,LOW,
-			                           LOW,LOW,LOW,HIGH};
+const int PiFocuser::StepperPins[] = { PIN1, PIN2, PIN3, PIN4 };
 
-	const int PiFocuser::longSequence[] = { HIGH,LOW,LOW,LOW,
-			                          HIGH,HIGH,LOW,LOW,
-				                      LOW,HIGH,LOW,LOW,
-				                      LOW,HIGH,HIGH,LOW,
-	                                  LOW,LOW,HIGH,LOW,
-	                                  LOW,LOW,HIGH,HIGH,
-	                                  LOW,LOW,LOW,HIGH,
-	                                  HIGH,LOW,LOW,HIGH};
+const int PiFocuser::shortSequence[] = { HIGH, LOW, LOW, LOW,
+                                         LOW, HIGH, LOW, LOW,
+                                         LOW, LOW, HIGH, LOW,
+                                         LOW, LOW, LOW, HIGH };
 
 
 
+const int PiFocuser::longSequence[] = { HIGH, LOW, LOW, LOW,
+                                        HIGH, HIGH, LOW, LOW,
+                                        LOW, HIGH, LOW, LOW,
+                                        LOW, HIGH, HIGH, LOW,
+                                        LOW, LOW, HIGH, LOW,
+                                        LOW, LOW, HIGH, HIGH,
+                                        LOW, LOW, LOW, HIGH,
+                                        HIGH, LOW, LOW, HIGH };
 
-	PiFocuser::PiFocuser():m_direction(PiFocuser::left){
-		wiringPiSetupGpio();
-		for (int pin = 0 ; pin < 4 ; ++pin)
-		    pinMode (StepperPins[pin], OUTPUT) ;
+PiFocuser::PiFocuser() :
+		m_direction(PiFocuser::left) {
+	wiringPiSetupGpio();
+	for (int pin = 0; pin < 4; ++pin)
+		pinMode(StepperPins[pin], OUTPUT);
+}
+
+void PiFocuser::setCycleCount(Direction dir, int& cycleCount){
+	switch (dir){
+	case PiFocuser::left:
+		cycleCount=0;
+		break;
+	case PiFocuser::right:
+		cycleCount=4;
+		break;
+	default:
+
 	}
+}
 
-	bool PiFocuser::move(Direction direction, int stepCount){
-		int count=0;
-                int cycleCount=0;
+void PiFocuser::updateCycleCount(Direction dir, int& cycleCount){
+	switch (dir){
+	case PiFocuser::left:
+		cycleCount++;
+		break;
+	case PiFocuser::right:
+		cycleCount--;
+		break;
+	default:
 
-		while (count<stepCount){
+	}
+}
 
-			for (int stepPin=0; stepPin<4; stepPin++){
-				int value=shortSequence[cycleCount*4+stepPin];
+bool PiFocuser::move(Direction direction, int stepCount, int delayMillis) {
+	int count = 0;
+	int cycleCount;
+	setCycleCount(direction,cycleCount)
+	while (count < stepCount) {
+
+		for (int stepPin = 0; stepPin < 4; stepPin++) {
+			int value = shortSequence[cycleCount * 4 + stepPin];
+			if (verbosity) {
 				if (value)
-					cout <<"Enable pin"<<StepperPins[stepPin]<<endl;
+					cout << "Enable pin" << StepperPins[stepPin] << endl;
 				else
-					cout <<"Disable pin"<<StepperPins[stepPin]<<endl;
-				digitalWrite(StepperPins[stepPin], value);
+					cout << "Disable pin" << StepperPins[stepPin] << endl;
 			}
-			if (cycleCount<4){
-			  cycleCount++;
-                        } else {
-                          cycleCount=0; 
-                        }
-			delay(50); //ms
-			count++;
+			digitalWrite(StepperPins[stepPin], value);
 		}
-		return true;
-
+		if (cycleCount < 4) {
+			updateCycleCount(direction,cycleCount);
+		} else {
+			cycleCount = 0;
+		}
+		delay(delayMillis); //ms
+		count++;
 	}
+	return true;
 
+}
 

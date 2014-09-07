@@ -13,11 +13,12 @@
 
 class PiFocuser {
 private:
-	static const int shortSequenceCount=16;
-	static const int longSequenceCount=32;
-	static const int shortSequence[shortSequenceCount];
-	static const int longSequence[longSequenceCount];
-	static const int StepperPins [4];
+	static const int  shortSequenceCount=16;
+	static const int  longSequenceCount=32;
+	static const int  shortSequence[shortSequenceCount];
+	static const int  longSequence[longSequenceCount];
+	static const int  StepperPins [4];
+	static bool       verbosity;
 
 public:
 	enum Direction {
@@ -26,14 +27,16 @@ public:
 	} ;
 private:
 	Direction m_direction;
-
+	void setCycleCount(Direction dir, int& cycleCount);
+	void updateCycleCount(Direction dir, int& cycleCount);
 public:
 
 
 	PiFocuser();
 	virtual ~PiFocuser(){}
 
-	bool move(Direction direction, int stepCount);
+	bool move(Direction direction, int stepCount, int delayMillis);
+
 
 };
 
