@@ -4,8 +4,11 @@
  *  Created on: Sep 6, 2014
  *      Author: klaus
  */
+#include <iostream>
 
 #include "PiFocuser.h"
+
+using namespace std;
 
 #define PIN1 18
 #define PIN2 17
@@ -45,10 +48,15 @@
 
 			for (int stepPin=0; stepPin<PiFocuser::shortSequenceCount; stepPin++){
 				int value=shortSequence[stepPin];
+				if (value)
+					cout <<"Enable pin"<<StepperPins[stepPin]<<endl;
+				else
+					cout <<"Disable pin"<<StepperPins[stepPin]<<endl;
 				digitalWrite(StepperPins[stepPin], value);
 			}
 
-			delay(50); //ms
+			delay(500); //ms
+			count++;
 		}
 		return true;
 
