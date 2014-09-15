@@ -6,19 +6,43 @@
  */
 
 #include <iostream>
+#include <stdlib.h>
+#include <string.h>
+
 #include "PiFocuser.h"
 
 using namespace std;
 
-int main(){
+int main(int argc, char* argv[]){
 	PiFocuser piFocuser;
-	PiFocuser::verbosity=true;
+        int duration=100;
+        int delay=1;
+        PiFocuser::Direction direction=PiFocuser::left;
+        //Parse arguments 
+	while (argc-->1){
+           if (strcmp(argv[argc-1],"--direction")==0){
+             if (strcmp(argv[argc],"right")==0){
+                direction=PiFocuser::right;
+             }
+           }
+           if (strcmp(argv[argc-1],"--duration")==0){
+              duration=atoi(argv[argc]);
+           }
+           if (strcmp(argv[argc-1],"--delay")==0){
+              delay=atoi(argv[argc]);
+           }
+           argc--;
+        }
+	PiFocuser::verbosity=false;
 	cout <<"PiFocuser object created."<<endl;
+	
+	
+	if (direction==PiFocuser::left)
+	   cout <<"PiFocuser move "<<duration<<" steps in left direction with delay "<<delay<<endl;
+        else
+	   cout <<"PiFocuser move "<<duration<<" steps in right direction with delay "<<delay<<endl;
 
-	cout <<"PiFocuser move 100 steps in left direction."<<endl;
-	piFocuser.move(PiFocuser::left,100,50);
-	cout <<"PiFocuser move 100 steps in right direction."<<endl;
-	piFocuser.move(PiFocuser::right,100,50);
+	piFocuser.move(direction,duration,delay);
 	cout <<"PiFocuser move finished."<<endl;
 }
 

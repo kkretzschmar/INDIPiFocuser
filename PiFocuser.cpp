@@ -49,7 +49,7 @@ void PiFocuser::setCycleCount(Direction dir, int& cycleCount){
 		cycleCount=0;
 		break;
 	case PiFocuser::right:
-		cycleCount=4-1;
+		cycleCount=8-1;
 		break;
 	default:
 		break;
@@ -76,7 +76,7 @@ bool PiFocuser::move(Direction direction, int stepCount, int delayMillis) {
 	while (count < stepCount) {
 
 		for (int stepPin = 0; stepPin < 4; stepPin++) {
-			int value = shortSequence[cycleCount * 4 + stepPin];
+			int value = longSequence[cycleCount * 4 + stepPin];
 			if (verbosity) {
 				if (value)
 					cout << "Enable pin" << StepperPins[stepPin] << endl;
@@ -85,7 +85,7 @@ bool PiFocuser::move(Direction direction, int stepCount, int delayMillis) {
 			}
 			digitalWrite(StepperPins[stepPin], value);
 		}
-		if ((cycleCount < 4) && (cycleCount > -1)) {
+		if ((cycleCount < 8) && (cycleCount > -1)) {
 			updateCycleCount(direction,cycleCount);
 		} else {
 			setCycleCount(direction,cycleCount);
